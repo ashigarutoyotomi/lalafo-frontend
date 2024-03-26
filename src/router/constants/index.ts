@@ -1,6 +1,6 @@
 export enum RouteName {
   HOME_PAGE = 'home',
-  LOGIN_PAGE = '/',
+  LOGIN_PAGE = 'login',
   REGISTER_PAGE = 'register',
   PRODUCTS_PAGE = 'products',
   CATEGORIES_PAGE = 'cateogories',

@@ -1,13 +1,13 @@
-export type Department = {
+export type Category = {
   name: string
   created_at: string
   updated_at: string
   id: number
 }
-export type InputCreateDepartment = {
+export type InputCreateCategory = {
   name: string
 }
-export type InputUpdateDepartment = {
+export type InputUpdateCategory = {
   id: number
   name: string
 }

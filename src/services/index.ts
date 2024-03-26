@@ -6,5 +6,5 @@ export const API = {
   users: userController,
   categories: categoryController,
   products: productController,
-  stats: subcategoriesController
+  subcategories: subcategoriesController
 }

@@ -10,7 +10,7 @@ import type { User, InputCreateUser, InputLoginUser } from './types'
 //   return await http.delete<APIResponse<boolean>>(`school/${id}`)
 // }
 
-async function createUser(input: InputCreateUser) {
+async function registerUser(input: InputCreateUser) {
   return await http.post<APIResponse<User>>('register', input)
 }
 
@@ -24,7 +24,7 @@ async function logoutUser() {
   return await http.post<APIResponse<User>>('logout')
 }
 export default {
-  createUser,
+  registerUser,
   logoutUser,
   loginUser
 }
