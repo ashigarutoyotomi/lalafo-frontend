@@ -1,41 +1,53 @@
 <script setup lang="ts">
-defineProps<{
-  msg: string
-}>()
+import { ref } from 'vue'
+import { API } from '@/services'
+import { onMounted } from 'vue'
+const productsList = ref({})
+import Sidebar from '@/components/Sidebar.vue'
+onMounted(async () => {
+  try {
+    const products = API.products.getProducts()
+    await products.then((response) => {
+      // console.log(response.data.data)
+      productsList.value = response.data.data
+    })
+  } catch (e) {
+    console.log(e)
+  }
+})
 </script>
 
 <template>
-  <div class="greetings">
-    <h1 class="green">{{ msg }}</h1>
-    <h3>
-      You’ve successfully created a project with
-      <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
-      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>. What's next?
-    </h3>
-  </div>
+  <Sidebar />
+  <el-scrollbar height="400px">
+    <el-card
+      style="max-width: 480px"
+      v-for="product in productsList"
+      :key="product"
+      class="scrollbar-demo-item"
+    >
+      <template #header>
+        <div class="card-header">
+          <span>{{ product.name }}</span>
+        </div>
+      </template>
+      <div>{{ product.description }}</div>
+      <template #footer>{{ product.favorites.length }}</template>
+    </el-card>
+  </el-scrollbar>
 </template>
 
 <style scoped>
-h1 {
-  font-weight: 500;
-  font-size: 2.6rem;
-  position: relative;
-  top: -10px;
-}
-
-h3 {
-  font-size: 1.2rem;
-}
-
-.greetings h1,
-.greetings h3 {
+.scrollbar-demo-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70%;
+  width: 100%;
+  margin: 10px;
   text-align: center;
-}
-
-@media (min-width: 1024px) {
-  .greetings h1,
-  .greetings h3 {
-    text-align: left;
-  }
+  border-radius: 4px;
+  background: var(--el-color-primary-light-9);
+  color: var(--el-color-primary);
 }
 </style>

@@ -52,7 +52,7 @@ const onSubmit = () => {
       </el-form-item>
       <div><router-link :to="{ name: RouteName.REGISTER_PAGE }">Register now</router-link></div>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">Create</el-button>
+        <el-button type="primary" @click="onSubmit">Login</el-button>
         <el-button>Cancel</el-button>
       </el-form-item>
     </el-form>
