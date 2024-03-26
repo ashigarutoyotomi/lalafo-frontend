@@ -17,6 +17,32 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: () => import('../views/MainView.vue')
+    },
+    {
+      path: '/products/create',
+      name: 'products/create',
+      component: () => import('../views/CreateProductView.vue')
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('../views/SettingsView.vue')
+    },
+    {
+      path: '/products/mine',
+      name: 'products/mine',
+      component: () => import('../views/MyProductsView.vue')
+    },
+    {
+      path: '/favorites',
+      name: 'favorites',
+      component: () => import('../views/FavoritesView.vue')
+    },
+
+    {
+      path: '/about',
+      name: 'about',
+      component: () => import('../views/AboutView.vue')
     }
   ]
 })

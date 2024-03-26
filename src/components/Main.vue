@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { API } from '@/services'
 import { onMounted } from 'vue'
+import AsideFilters from '@/components/AsideFilters.vue'
 const productsList = ref({})
 import Sidebar from '@/components/Sidebar.vue'
 onMounted(async () => {
@@ -18,23 +19,32 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Sidebar />
-  <el-scrollbar height="400px">
-    <el-card
-      style="max-width: 480px"
-      v-for="product in productsList"
-      :key="product"
-      class="scrollbar-demo-item"
-    >
-      <template #header>
-        <div class="card-header">
-          <span>{{ product.name }}</span>
-        </div>
-      </template>
-      <div>{{ product.description }}</div>
-      <template #footer>{{ product.favorites.length }}</template>
-    </el-card>
-  </el-scrollbar>
+  <div class="common-layout">
+    <el-container>
+      <el-header><Sidebar /></el-header>
+      <el-container>
+        <el-aside width="200px"><AsideFilters /></el-aside>
+        <el-main
+          ><el-scrollbar height="400px">
+            <el-card
+              style="max-width: 480px"
+              v-for="product in productsList"
+              :key="product"
+              class="scrollbar-demo-item"
+            >
+              <template #header>
+                <div class="card-header">
+                  <span>{{ product.name }}</span>
+                </div>
+              </template>
+              <div>{{ product.description }}</div>
+              <template #footer>{{ product.favorites.length }}</template>
+            </el-card>
+          </el-scrollbar></el-main
+        >
+      </el-container>
+    </el-container>
+  </div>
 </template>
 
 <style scoped>

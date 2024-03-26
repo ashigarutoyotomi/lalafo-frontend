@@ -5,7 +5,10 @@ export enum RouteName {
   PRODUCTS_PAGE = 'products',
   CATEGORIES_PAGE = 'cateogories',
   SUBCATEGORIES_PAGE = 'subcategories',
-  PRODUCT_PHOTOS_PAGE = 'product-photos',
+  PRODUCTS_CREATE = 'products/create',
   ABOUT_PAGE = 'about',
-  PRODUCTS_STORE = 'products/store'
+  PRODUCTS_STORE = 'products/store',
+  SETTINGS = 'settings',
+  PRODUCTS_MINE = 'products/mine',
+  FAVORITED_LOTS = 'favorites'
 }
