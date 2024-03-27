@@ -15,7 +15,7 @@
             <el-input v-model="form.password" placeholder="Password" clearable type="password" />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">Update</el-button>
+            <el-button type="primary" @click="onSubmit(userData.id)">Update</el-button>
           </el-form-item>
         </el-form></el-main
       >
@@ -46,18 +46,21 @@ onMounted(() => {
   form.name = userData.value.name
 })
 
-const onSubmit = () => {
+const onSubmit = (id: number) => {
   const data: InputUpdateUser = { email: form.email, password: form.password, name: form.name }
   // console.log('submit!')
   try {
-    const response = API.users.updateUser(data)
+    const response = API.users.updateUser(data, id)
     response.then((data) => {
       const responseData = data.data
       // ElMessage.success(responseData)
       console.log(responseData)
     })
   } catch (error) {
-    ElMessage.success(error)
+    if (error.code == 422) {
+      ElMessage.error(error.response.data.message)
+    }
+    ElMessage.error(error)
   }
 }
 </script>
