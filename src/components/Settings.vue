@@ -20,6 +20,21 @@
         </el-form></el-main
       >
     </el-container>
+    <el-button plain @click="dialogVisible = true" width="30%" size="large" type="danger">
+      Delete the account
+    </el-button>
+
+    <el-dialog v-model="dialogVisible" title="Tips" width="30%">
+      <span>This is a message</span>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="dialogVisible = false">Cancel</el-button>
+          <el-button type="primary" @click="(dialogVisible = false), deleteUser(userData.id)">
+            Confirm
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </el-container>
 </template>
 
@@ -30,7 +45,9 @@ import { useUserStore } from '@/stores/modules/users'
 import { onMounted } from 'vue'
 import { API } from '@/services'
 import type { InputUpdateUser } from '@/services/users/types'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import router from '@/router'
+import { RouteName } from '@/router/constants'
 const userStore = useUserStore()
 const user = userStore.getUser()
 const userData = ref({})
@@ -62,6 +79,28 @@ const onSubmit = (id: number) => {
     }
     ElMessage.error(error)
   }
+}
+
+const dialogVisible = ref(false)
+
+const handleClose = (done: () => void) => {
+  ElMessageBox.confirm('Are you sure to close this dialog?')
+    .then(() => {
+      done()
+    })
+    .catch(() => {
+      // catch error
+    })
+}
+
+const deleteUser = async (id: number) => {
+  const response = await API.users.deleteUser(id)
+  // response.then((data) => {
+  //   console.log(data)
+  // })
+  ElMessage.success('Deleted successfully!' + id)
+  userStore.flushUser()
+  router.push(RouteName.LOGIN_PAGE)
 }
 </script>
 

@@ -9,7 +9,9 @@ async function getProducts() {
 async function deleteProduct(id: number) {
   return await http.delete<APIResponse<boolean>>(`products/${id}`)
 }
-
+async function getProduct(id: number) {
+  return await http.get<APIResponse<boolean>>(`products/${id}`)
+}
 async function createProduct(input: InputCreateProduct) {
   return await http.post<APIResponse<Product>>('products', input)
 }
@@ -25,5 +27,6 @@ export default {
   updateProduct,
   deleteProduct,
   getProducts,
-  myProducts
+  myProducts,
+  getProduct
 }

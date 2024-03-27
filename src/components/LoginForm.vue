@@ -43,6 +43,7 @@ const onSubmit = () => {
 
 <template>
   <el-card style="max-width: 70%; min-width: 50%">
+    {{ errors }}
     <el-form :model="form" label-width="auto" style="width: 100%">
       <el-form-item label="Email">
         <el-input v-model="form.email" type="email" required />

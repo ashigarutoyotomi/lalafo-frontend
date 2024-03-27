@@ -26,9 +26,13 @@ async function logoutUser() {
 async function updateUser(input: InputUpdateUser, id: number) {
   return await http.put<APIResponse<User>>(`users/${id}`, input)
 }
+async function deleteUser(id: number) {
+  return await http.delete<APIResponse<User>>(`users/${id}`)
+}
 export default {
   registerUser,
   logoutUser,
   loginUser,
-  updateUser
+  updateUser,
+  deleteUser
 }

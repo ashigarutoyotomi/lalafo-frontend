@@ -2,7 +2,7 @@
   <el-container>
     <el-header><Sidebar /></el-header>
     <el-container>
-      <el-aside width="200px"><AsideFilters /></el-aside>
+      <el-aside width="200px"></el-aside>
       <el-main>
         <el-row :gutter="10" v-for="product in productsList" :key="product.id">
           <el-col :xs="10" :sm="6" :md="4" :lg="4" :xl="4"
@@ -53,7 +53,7 @@ onMounted(() => {
 })
 
 const editProduct = (id: string) => {
-  router.push({ name: RouteName.EDIT_PRODUCT_VIEW, params: id })
+  router.push({ name: RouteName.EDIT_PRODUCT_VIEW, params: { id: id } })
 }
 
 const deleteProduct = (id: number) => {

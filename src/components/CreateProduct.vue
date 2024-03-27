@@ -3,77 +3,62 @@
     <el-container>
       <el-header><Sidebar /></el-header>
       <el-container>
-        <el-upload
-          class="avatar-uploader"
-          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload"
-        >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
-        </el-upload>
         <el-aside width="200px"></el-aside>
-        <el-main
+        <el-main>
+          <el-upload
+            v-model:file-list="fileList"
+            class="upload-demo"
+            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+            multiple
+            :on-preview="handlePreview"
+            :on-remove="handleRemove"
+            :before-remove="beforeRemove"
+            :limit="3"
+            :on-exceed="handleExceed"
+          >
+            <el-button type="primary">Click to upload</el-button>
+            <template #tip>
+              <div class="el-upload__tip">jpg/png files with a size less than 500KB.</div>
+            </template> </el-upload
           ><el-form :model="form" label-width="auto" style="max-width: 600px">
-            <el-form-item label="Activity name">
+            <el-form-item label="Name">
               <el-input v-model="form.name" />
             </el-form-item>
-            <el-form-item label="Activity zone">
-              <el-select v-model="form.region" placeholder="please select your zone">
-                <el-option label="Zone one" value="shanghai" />
-                <el-option label="Zone two" value="beijing" />
+            <el-form-item label="Subcategory">
+              <el-select v-model="form.subcategory_id" placeholder="Subcategory">
+                <el-option
+                  v-for="subcategory in subcategories"
+                  :key="subcategory.id"
+                  :value="subcategory.id"
+                  >{{ subcategory.name }}
+                </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="Activity time">
+            <el-form-item label="Description">
               <el-col :span="11">
-                <el-date-picker
-                  v-model="form.date1"
-                  type="date"
-                  placeholder="Pick a date"
-                  style="width: 100%"
-                />
-              </el-col>
-              <el-col :span="2" class="text-center">
-                <span class="text-gray-500">-</span>
-              </el-col>
-              <el-col :span="11">
-                <el-time-picker
-                  v-model="form.date2"
-                  placeholder="Pick a time"
+                <el-input
+                  v-model="form.description"
+                  type="text"
+                  placeholder="Pick a desc"
                   style="width: 100%"
                 />
               </el-col>
             </el-form-item>
-            <el-form-item label="Instant delivery">
-              <el-switch v-model="form.delivery" />
+
+            <el-form-item label="Description">
+              <el-col :span="11">
+                <el-input-number
+                  v-model="form.price"
+                  type="text"
+                  placeholder="Pick a price"
+                  style="width: 100%"
+                />
+              </el-col>
             </el-form-item>
-            <el-form-item label="Activity type">
-              <el-checkbox-group v-model="form.type">
-                <el-checkbox value="Online activities" name="type"> Online activities </el-checkbox>
-                <el-checkbox value="Promotion activities" name="type">
-                  Promotion activities
-                </el-checkbox>
-                <el-checkbox value="Offline activities" name="type">
-                  Offline activities
-                </el-checkbox>
-                <el-checkbox value="Simple brand exposure" name="type">
-                  Simple brand exposure
-                </el-checkbox>
-              </el-checkbox-group>
-            </el-form-item>
-            <el-form-item label="Resources">
-              <el-radio-group v-model="form.resource">
-                <el-radio value="Sponsor">Sponsor</el-radio>
-                <el-radio value="Venue">Venue</el-radio>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item label="Activity form">
-              <el-input v-model="form.desc" type="textarea" />
-            </el-form-item>
+
             <el-form-item>
               <el-button type="primary" @click="onSubmit">Create</el-button>
-              <el-button>Cancel</el-button>
+              <el-button @click="goBack">Cancel</el-button>
             </el-form-item>
           </el-form></el-main
         >
@@ -82,73 +67,78 @@
   </div>
 </template>
 
-<style scope>
-.avatar-uploader .avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
-}
-</style>
-<style>
-.avatar-uploader .el-upload {
-  border: 1px dashed var(--el-border-color);
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: var(--el-transition-duration-fast);
-}
-
-.avatar-uploader .el-upload:hover {
-  border-color: var(--el-color-primary);
-}
-
-.el-icon.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  text-align: center;
-}
-</style>
+<style scope></style>
 
 <script lang="ts" setup>
+import { onMounted } from 'vue'
 import { reactive, ref } from 'vue'
 import Sidebar from './Sidebar.vue'
 import { Plus } from '@element-plus/icons-vue'
+import { InputCreateProduct } from '@/services/products/types'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { API } from '@/services'
+import type { UploadProps, UploadUserFile } from 'element-plus'
+import { RouteName } from '@/router/constants'
+import router from '@/router'
 
-import type { UploadProps } from 'element-plus'
-import { ElMessage } from 'element-plus'
-// do not use same name with ref
+const subcategories = ref({})
 const form = reactive({
   name: '',
-  region: '',
-  date1: '',
-  date2: '',
-  delivery: false,
-  type: [],
-  resource: '',
-  desc: ''
+  description: '',
+  subcategory_id: 0,
+  id: 0,
+  price: 0
 })
+const product: InputCreateProduct = form
 
 const onSubmit = () => {
-  console.log('submit!')
+  const response = API.products.createProduct(form)
+  response.then((res) => {
+    ElMessage.success('Product created successfully!')
+    router.go(-1)
+  })
+  response.catch((err) => {
+    if (err.response.status == 422) {
+      ElMessage.error(err.response.data.message)
+    }
+  })
 }
 
-const imageUrl = ref('')
+const fileList = ref<UploadUserFile[]>([])
 
-const handleAvatarSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
-  imageUrl.value = URL.createObjectURL(uploadFile.raw!)
+const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
+  console.log(file, uploadFiles)
 }
 
-const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
-  if (rawFile.type !== 'image/jpeg') {
-    ElMessage.error('Avatar picture must be JPG format!')
-    return false
-  } else if (rawFile.size / 1024 / 1024 > 2) {
-    ElMessage.error('Avatar picture size can not exceed 2MB!')
-    return false
-  }
-  return true
+const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
+  console.log(uploadFile)
+}
+
+const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
+  ElMessage.warning(
+    `The limit is 3, you selected ${files.length} files this time, add up to ${
+      files.length + uploadFiles.length
+    } totally`
+  )
+}
+
+const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
+  return ElMessageBox.confirm(`Cancel the transfer of ${uploadFile.name} ?`).then(
+    () => true,
+    () => false
+  )
+}
+onMounted(() => {
+  const response = API.subcategories.getSubcategories()
+  response.then((data) => {
+    subcategories.value = data.data
+    // console.log(data.data)
+  })
+  response.catch((error) => {
+    ElMessage.error(error)
+  })
+})
+const goBack = () => {
+  router.go(-1)
 }
 </script>
