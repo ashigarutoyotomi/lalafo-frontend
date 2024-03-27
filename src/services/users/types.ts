@@ -12,3 +12,8 @@ export type InputLoginUser = {
   email: string
   password: string
 }
+export type InputUpdateUser = {
+  email: string
+  password: string
+  name: string
+}

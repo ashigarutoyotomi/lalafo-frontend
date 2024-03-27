@@ -10,5 +10,6 @@ export enum RouteName {
   PRODUCTS_STORE = 'products/store',
   SETTINGS = 'settings',
   PRODUCTS_MINE = 'products/mine',
-  FAVORITED_LOTS = 'favorites'
+  FAVORITED_LOTS = 'favorites',
+  EDIT_PRODUCT_VIEW = 'editProduct'
 }

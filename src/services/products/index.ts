@@ -17,10 +17,13 @@ async function createProduct(input: InputCreateProduct) {
 async function updateProduct(input: InputUpdateProduct, id: number) {
   return await http.put<APIResponse<boolean>>(`products/${id}`, input)
 }
-
+async function myProducts() {
+  return await http.get<APIResponse<Product[]>>('users/products')
+}
 export default {
   createProduct,
   updateProduct,
   deleteProduct,
-  getProducts
+  getProducts,
+  myProducts
 }

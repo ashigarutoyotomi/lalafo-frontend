@@ -1,4 +1,4 @@
-export type Products = {
+export type Product = {
   name: string
   description: string
   photos: Array<any>
@@ -8,7 +8,7 @@ export type Products = {
   updated_at: string
   id: number
 }
-export type InputCreateProducts = {
+export type InputCreateProduct = {
   name: string
   description: string
   subcategory_id: number
@@ -17,7 +17,7 @@ export type InputCreateProducts = {
   updated_at: string
   id: number
 }
-export type InputUpdateProducts = {
+export type InputUpdateProduct = {
   name: string
   description: string
   subcategory_id: number

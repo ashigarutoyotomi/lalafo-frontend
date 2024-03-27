@@ -20,6 +20,11 @@
       <el-menu-item index="2-4"
         ><router-link :to="{ name: RouteName.FAVORITED_LOTS }">Favorites</router-link></el-menu-item
       >
+      <el-menu-item index="2-4"
+        ><el-button type="warning" size="small" @click.prevent="onLogout"
+          >Logout</el-button
+        ></el-menu-item
+      >
     </el-sub-menu>
     <el-menu-item index="3"
       ><router-link :to="{ name: RouteName.ABOUT_PAGE }"> About</router-link></el-menu-item
@@ -39,11 +44,21 @@
 <script setup lang="ts">
 import { RouteName } from '@/router/constants'
 import { ref } from 'vue'
-
+import { useAuthenticationStore } from '@/stores/modules/authentication'
+import { API } from '@/services'
+import router from '@/router'
 const input = ref('')
 
 const search = () => {
   console.log(input.value)
+}
+
+const onLogout = async () => {
+  const authenticationStore = useAuthenticationStore()
+  await API.users.logoutUser()
+  authenticationStore.removeToken()
+  // console.log(API)
+  router.push(RouteName.LOGIN_PAGE)
 }
 </script>
 

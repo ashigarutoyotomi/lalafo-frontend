@@ -7,13 +7,19 @@ export const useUserStore = defineStore('userStore', () => {
 
   function initUser(data: User[]) {
     user.value = data
+    localStorage.setItem('user', JSON.stringify(user))
   }
   function flushUser() {
     user.value = null
+    localStorage.removeItem('user')
+  }
+  function getUser(): User[] | null {
+    return JSON.parse(localStorage.getItem('user') || '[]')
   }
   return {
     user,
     initUser,
-    flushUser
+    flushUser,
+    getUser
   }
 })
