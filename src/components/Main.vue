@@ -5,12 +5,13 @@ import { onMounted } from 'vue'
 import AsideFilters from '@/components/AsideFilters.vue'
 const productsList = ref({})
 import Sidebar from '@/components/Sidebar.vue'
+import { ElMessage } from 'element-plus'
 onMounted(async () => {
   try {
-    const products = API.products.getProducts()
+    const products = API.products.getRandomProducts()
     await products.then((response) => {
-      // console.log(response.data.data)
-      productsList.value = response.data.data
+      // console.log(response.data)
+      productsList.value = response.data
     })
   } catch (e) {
     console.log(e)
@@ -38,7 +39,9 @@ onMounted(async () => {
                 </div>
               </template>
               <div>{{ product.description }}</div>
-              <template #footer>{{ product.favorites.length }}</template>
+              <template #footer
+                >Favs: {{ product.favorites.length }} {{ product.subcategory.name }}</template
+              >
             </el-card>
           </el-scrollbar></el-main
         >

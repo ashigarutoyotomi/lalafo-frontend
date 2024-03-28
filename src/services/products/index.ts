@@ -5,7 +5,9 @@ import type { Product, InputCreateProduct, InputUpdateProduct } from './types'
 async function getProducts() {
   return await http.get<APIResponse<Product[]>>('products')
 }
-
+async function getRandomProducts() {
+  return await http.get<APIResponse<Product[]>>('products/random-products')
+}
 async function deleteProduct(id: number) {
   return await http.delete<APIResponse<boolean>>(`products/${id}`)
 }
@@ -28,5 +30,6 @@ export default {
   deleteProduct,
   getProducts,
   myProducts,
-  getProduct
+  getProduct,
+  getRandomProducts
 }

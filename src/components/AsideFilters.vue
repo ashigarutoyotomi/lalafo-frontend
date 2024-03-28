@@ -4,7 +4,7 @@ import { onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { API } from '@/services'
 const categoriesList = ref({})
-
+const categoriesChecked = ref([])
 onMounted(() => {
   const categories = API.categories.getCategories()
   categories.then((res) => {
@@ -16,6 +16,17 @@ onMounted(() => {
     ElMessage.error(err)
   })
 })
+
+const checkCategory = (id: number) => {
+  if (categoriesChecked.value.some((obj) => obj.id === id)) {
+    categoriesChecked.value = categoriesChecked.value.filter((category) => {
+      return id != category.id
+    })
+  } else {
+    categoriesChecked.value.push(categoriesList.value.find((obj) => obj.id === id))
+  }
+  // console.log(categoriesChecked.value)
+}
 </script>
 
 <template>
@@ -25,6 +36,7 @@ onMounted(() => {
       :key="category.id"
       :label="category.name"
       size="large"
+      @click="checkCategory(category.id)"
     />
   </div>
 </template>
