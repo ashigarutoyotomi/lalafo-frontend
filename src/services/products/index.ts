@@ -1,6 +1,6 @@
 import http from '../api'
 import type { APIResponse } from '../types'
-import type { Product, InputCreateProduct, InputUpdateProduct } from './types'
+import type { Product, InputCreateProduct, InputUpdateProduct, InputSearchProduct } from './types'
 
 async function getProducts() {
   return await http.get<APIResponse<Product[]>>('products')
@@ -24,6 +24,9 @@ async function updateProduct(input: InputUpdateProduct, id: number) {
 async function myProducts() {
   return await http.get<APIResponse<Product[]>>('users/products')
 }
+async function searchProducts(input: InputSearchProduct) {
+  return await http.post<APIResponse<any[]>>('products/search', input)
+}
 export default {
   createProduct,
   updateProduct,
@@ -31,5 +34,6 @@ export default {
   getProducts,
   myProducts,
   getProduct,
-  getRandomProducts
+  getRandomProducts,
+  searchProducts
 }

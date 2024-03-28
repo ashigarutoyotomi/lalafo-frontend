@@ -8,6 +8,9 @@
           <el-form-item :label="product.name">
             <el-input v-model="form.name" placeholder="Name" clearable type="text" />
           </el-form-item>
+          <el-input-number :label="product.price">
+            <el-input v-model="form.price" placeholder="price" clearable type="number" />
+          </el-input-number>
           <el-form-item :label="product.description">
             <el-input
               v-model="form.description"

@@ -4,6 +4,7 @@ import { API } from '@/services'
 import { onMounted } from 'vue'
 import AsideFilters from '@/components/AsideFilters.vue'
 const productsList = ref({})
+const productsListAll = ref({})
 import Sidebar from '@/components/Sidebar.vue'
 import { ElMessage } from 'element-plus'
 onMounted(async () => {
@@ -12,11 +13,19 @@ onMounted(async () => {
     await products.then((response) => {
       // console.log(response.data)
       productsList.value = response.data
+      productsListAll.value = response.data
     })
   } catch (e) {
     console.log(e)
   }
 })
+const changeCategories = (categories) => {
+  for (let index = 0; index < categories.length; index++) {
+    productsList.value = productsListAll.value.filter((product) => {
+      return product.subcategory.category_id == categories[index].id
+    })
+  }
+}
 </script>
 
 <template>
@@ -24,7 +33,7 @@ onMounted(async () => {
     <el-container>
       <el-header><Sidebar /></el-header>
       <el-container>
-        <el-aside width="200px"><AsideFilters /></el-aside>
+        <el-aside width="200px"><AsideFilters @change-categories="changeCategories" /></el-aside>
         <el-main
           ><el-scrollbar height="400px">
             <el-card

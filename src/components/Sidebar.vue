@@ -30,8 +30,14 @@
       ><router-link :to="{ name: RouteName.ABOUT_PAGE }"> About</router-link></el-menu-item
     >
     <el-menu-item index="4">
-      <el-input v-model="input" style="width: 200px" placeholder="Please input" clearable />
-      <el-select :v-model="categoryId" placeholder="choose category">
+      <el-input
+        v-model="data.keyword"
+        style="width: 200px"
+        placeholder="Please input"
+        clearable
+        width="100%"
+      />
+      <el-select :v-model="data.category_id" placeholder="choose category">
         <el-option
           :label="category.name"
           :value="category.id"
@@ -40,7 +46,11 @@
           @click="log(category.id)"
         ></el-option>
       </el-select>
-      <el-select :v-model="subcategoryId" placeholder="choose subcategory" v-if="categoryId > 0">
+      <el-select
+        :v-model="data.subcategory_id"
+        placeholder="choose subcategory"
+        v-if="categoryId > 0"
+      >
         <el-option
           :label="subcategory.name"
           :value="subcategory.id"
@@ -62,13 +72,33 @@ import { API } from '@/services'
 import router from '@/router'
 import { onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import type { InputSearchProduct } from '@/services/products/types'
+import { useProductStore } from '@/stores/modules/products'
 const categoriesList = ref({})
 const subcategoriesList = ref({})
-const input = ref('')
+const productsStore = useProductStore()
 const categoryId = ref(0)
 const subcategoryId = ref(0)
+const data: InputSearchProduct = reactive({
+  category_id: 0,
+  subcategory_id: 0,
+  keyword: ''
+})
 const search = () => {
-  console.log(input.value)
+  // console.log(data)
+  try {
+    const response = API.products.searchProducts(data)
+    response.then((data) => {
+      // console.log(data)
+      productsStore.setProducts(data.data)
+      router.push({ name: RouteName.RESULT_PAGE })
+    })
+  } catch (error) {
+    if (error.response.status == 422) {
+      ElMessage.error(error.response.data.message)
+    }
+    ElMessage.error(error.response)
+  }
 }
 
 const onLogout = async () => {
@@ -104,11 +134,13 @@ const loadCategories = (id: number) => {
 const log = (id: number) => {
   // ElMessage.error('' + id)
   categoryId.value = id
+  data.category_id = id
   loadCategories(id)
 }
 const logSubcategory = (id: number) => {
   // ElMessage.error('' + id)
   subcategoryId.value = id
+  data.subcategory_id = id
 }
 </script>
 

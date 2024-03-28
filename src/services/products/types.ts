@@ -16,3 +16,8 @@ export type InputUpdateProduct = {
   subcategory_id: number
   price: number
 }
+export type InputSearchProduct = {
+  keyword: string
+  subcategory_id: number
+  category_id: number
+}

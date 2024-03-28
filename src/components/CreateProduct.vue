@@ -5,26 +5,8 @@
       <el-container>
         <el-aside width="200px"></el-aside>
         <el-main>
-          <el-upload
-            v-model:file-list="fileList"
-            class="upload-demo"
-            action=""
-            multiple
-            :on-preview="handlePreview"
-            :http-request="loadFile"
-            :on-remove="handleRemove"
-            :before-remove="beforeRemove"
-            :limit="1"
-            :on-exceed="handleExceed"
-            accept=".png,.jpg"
-            :before-upload="beforeUpload"
-            auto-load="false"
-          >
-            <el-button type="primary">Click to upload</el-button>
-            <template #tip>
-              <div class="el-upload__tip">jpg/png files with a size less than 500KB.</div>
-            </template> </el-upload
-          ><el-form :model="form" label-width="auto" style="max-width: 600px">
+          <input type="file" ref="fileInput" multiple accept="images/png,images/jpg" />
+          <el-form :model="form" label-width="auto" style="max-width: 600px">
             <el-form-item label="Name">
               <el-input v-model="form.name" />
             </el-form-item>
@@ -86,6 +68,8 @@ import { RouteName } from '@/router/constants'
 import router from '@/router'
 import type { UploadRawFile } from 'element-plus'
 import type { UploadRequestOptions } from 'element-plus'
+
+const fileInput = ref(null)
 const subcategories = ref({})
 const form = reactive({
   name: '',
@@ -93,11 +77,15 @@ const form = reactive({
   subcategory_id: 0,
   id: 0,
   price: 0,
-  file: null
+  photos: []
 })
 const product: InputCreateProduct = form
 
 const onSubmit = () => {
+  const files = fileInput.value.files
+  for (let i = 0; i < files.length; i++) {
+    form.photos.push(new FormData(files[i]))
+  }
   const response = API.products.createProduct(form)
   response.then((res) => {
     ElMessage.success('Product created successfully!')
@@ -107,25 +95,8 @@ const onSubmit = () => {
     if (err.response.status == 422) {
       ElMessage.error(err.response.data.message)
     }
+    ElMessage.error(err.response.data)
   })
-}
-
-const fileList = ref<UploadUserFile[]>([])
-
-const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
-  console.log(file, uploadFiles)
-}
-
-const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
-  console.log(uploadFile)
-}
-
-const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
-  ElMessage.warning(
-    `The limit is 3, you selected ${files.length} files this time, add up to ${
-      files.length + uploadFiles.length
-    } totally`
-  )
 }
 
 onMounted(() => {
@@ -141,15 +112,7 @@ onMounted(() => {
 const goBack = () => {
   router.go(-1)
 }
-const loadFile = (uploadFile: UploadRequestOptions) => {
-  form.file = uploadFile.file
-}
-
-const beforeUpload = (uploadFile: UploadRawFile) => {
-  return uploadFile.type === 'text/csv'
-}
-
-const beforeRemove = () => {
-  form.file = null
+const handleFileChange = (event) => {
+  selectedFiles.value = Array.from(event.target.files)
 }
 </script>

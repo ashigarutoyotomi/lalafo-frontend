@@ -3,6 +3,9 @@ import { ref, reactive } from 'vue'
 import { onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { API } from '@/services'
+import { defineEmits, defineProps, computed } from 'vue'
+
+const emit = defineEmits(['changeCategories'])
 const categoriesList = ref({})
 const categoriesChecked = ref([])
 onMounted(() => {
@@ -25,7 +28,7 @@ const checkCategory = (id: number) => {
   } else {
     categoriesChecked.value.push(categoriesList.value.find((obj) => obj.id === id))
   }
-  // console.log(categoriesChecked.value)
+  emit('changeCategories', categoriesChecked.value)
 }
 </script>
 
