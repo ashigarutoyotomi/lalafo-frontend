@@ -8,13 +8,17 @@
           <el-upload
             v-model:file-list="fileList"
             class="upload-demo"
-            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+            action=""
             multiple
             :on-preview="handlePreview"
+            :http-request="loadFile"
             :on-remove="handleRemove"
             :before-remove="beforeRemove"
-            :limit="3"
+            :limit="1"
             :on-exceed="handleExceed"
+            accept=".png,.jpg"
+            :before-upload="beforeUpload"
+            auto-load="false"
           >
             <el-button type="primary">Click to upload</el-button>
             <template #tip>
@@ -80,14 +84,16 @@ import { API } from '@/services'
 import type { UploadProps, UploadUserFile } from 'element-plus'
 import { RouteName } from '@/router/constants'
 import router from '@/router'
-
+import type { UploadRawFile } from 'element-plus'
+import type { UploadRequestOptions } from 'element-plus'
 const subcategories = ref({})
 const form = reactive({
   name: '',
   description: '',
   subcategory_id: 0,
   id: 0,
-  price: 0
+  price: 0,
+  file: null
 })
 const product: InputCreateProduct = form
 
@@ -122,12 +128,6 @@ const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
   )
 }
 
-const beforeRemove: UploadProps['beforeRemove'] = (uploadFile, uploadFiles) => {
-  return ElMessageBox.confirm(`Cancel the transfer of ${uploadFile.name} ?`).then(
-    () => true,
-    () => false
-  )
-}
 onMounted(() => {
   const response = API.subcategories.getSubcategories()
   response.then((data) => {
@@ -140,5 +140,16 @@ onMounted(() => {
 })
 const goBack = () => {
   router.go(-1)
+}
+const loadFile = (uploadFile: UploadRequestOptions) => {
+  form.file = uploadFile.file
+}
+
+const beforeUpload = (uploadFile: UploadRawFile) => {
+  return uploadFile.type === 'text/csv'
+}
+
+const beforeRemove = () => {
+  form.file = null
 }
 </script>

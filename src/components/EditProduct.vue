@@ -29,8 +29,39 @@
           <el-form-item>
             <el-button type="primary" @click="onSubmit">Update</el-button>
           </el-form-item>
-        </el-form></el-main
-      >
+        </el-form>
+
+        <h1>Photos</h1>
+        <div v-if="photos.length > 0">
+          <div v-for="photo in photos" :key="photo.id">
+            <img :src="photoUrl + photo.path" alt="photo" />
+            <el-button type="danger" @click="deletePhoto(photo.id)">delete</el-button>
+          </div>
+        </div>
+        <div v-else>
+          <h2>no photos</h2>
+        </div>
+        <el-upload
+          v-model:file-list="fileList"
+          class="upload-demo"
+          action=""
+          multiple
+          :on-preview="handlePreview"
+          :http-request="loadFile"
+          :on-remove="handleRemove"
+          :before-remove="beforeRemove"
+          :limit="1"
+          :on-exceed="handleExceed"
+          accept=".png,.jpg"
+          :before-upload="beforeUpload"
+          auto-load="false"
+        >
+          <el-button type="primary">Click to upload</el-button>
+          <template #tip>
+            <div class="el-upload__tip">jpg/png files with a size less than 500KB.</div>
+          </template>
+        </el-upload>
+      </el-main>
     </el-container>
   </el-container>
 </template>
@@ -47,20 +78,23 @@ import Subcategories from '@/services/subcategories'
 import type { Product } from '@/services/products/types'
 import { useRoute } from 'vue-router'
 import router from '@/router'
-
+import type { UploadRawFile } from 'element-plus'
+import type { UploadRequestOptions } from 'element-plus'
+import type { UploadProps, UploadUserFile } from 'element-plus'
 const route = useRoute()
 const subcategories = ref({})
 const userStore = useUserStore()
 const user = userStore.getUser()
 const userData = ref({})
 const product = ref({})
+const photos = ref({})
 const form = ref({
   description: product.value.description,
   subcategory_id: product.value.id,
   name: product.value.name,
   price: product.value.price
 })
-
+const photoUrl = import.meta.env.VITE_URL + '/storage/photos/'
 const onSubmit = () => {
   const data: InputUpdateProduct = {
     description: form.value.description,
@@ -98,12 +132,57 @@ onMounted(() => {
   const responseProduct = API.products.getProduct(route.params.id)
   responseProduct.then((data) => {
     const responseProductData = data.data
-    // ElMessage.success(responseData)
+    // console.log(responseProductData.photos)
     product.value = responseProductData
-    // console.log(responseProductData)
-    // console.log(responseData)
+    photos.value = responseProductData.photos
+    // console.log(responseProductData.photos)
   })
 })
+const deletePhoto = (id: number) => {
+  // ElMessage.success('' + id)
+  try {
+    const response = API.photos.deletePhoto(id)
+    response.then((data) => {
+      const responseData = data.data
+      ElMessage.success(responseData)
+      photos.value = photos.value.filter((photo) => {
+        return photo.id !== id
+      })
+      // console.log(responseData)
+    })
+  } catch (error) {
+    ElMessage.error(error)
+  }
+}
+
+const fileList = ref<UploadUserFile[]>([])
+
+const handleRemove: UploadProps['onRemove'] = (file, uploadFiles) => {
+  console.log(file, uploadFiles)
+}
+
+const handlePreview: UploadProps['onPreview'] = (uploadFile) => {
+  console.log(uploadFile)
+}
+
+const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
+  ElMessage.warning(
+    `The limit is 3, you selected ${files.length} files this time, add up to ${
+      files.length + uploadFiles.length
+    } totally`
+  )
+}
+
+const loadFile = (uploadFile: UploadRequestOptions) => {
+  form.value.file = uploadFile.file
+}
+const beforeUpload = (uploadFile: UploadRawFile) => {
+  return uploadFile.type === 'text/csv'
+}
+
+const beforeRemove = () => {
+  form.value.file = null
+}
 </script>
 
 <style scope>
