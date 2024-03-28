@@ -5,7 +5,17 @@
       <el-container>
         <el-aside width="200px"></el-aside>
         <el-main>
-          <input type="file" ref="fileInput" multiple accept="images/png,images/jpg" />
+          <el-upload
+            action=""
+            accept=".jpg, .png"
+            :auto-load="false"
+            :limit="1"
+            :http-request="loadFile"
+            :before-upload="beforeUpload"
+            :before-remove="beforeRemove"
+          >
+            <el-button type="primary">Click to upload</el-button>
+          </el-upload>
           <el-form :model="form" label-width="auto" style="max-width: 600px">
             <el-form-item label="Name">
               <el-input v-model="form.name" />
@@ -80,6 +90,20 @@ const form = reactive({
   photos: []
 })
 const product: InputCreateProduct = form
+
+const loadFile = (uploadFile: UploadRequestOptions) => {
+  const file = uploadFile.file;
+  form.photos.push(file);
+};
+
+const beforeUpload = (uploadFile: UploadRawFile) => {
+  const types = ["image/png", "image/jpeg"];
+  return types.includes(uploadFile.type);
+};
+
+const beforeRemove = () => {
+  form.photos = [];
+};
 
 const onSubmit = () => {
   const files = fileInput.value.files
