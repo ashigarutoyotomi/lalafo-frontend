@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { API } from '@/services'
 import { onMounted } from 'vue'
 import AsideFilters from '@/components/AsideFilters.vue'
+
+const photoUrl = import.meta.env.VITE_URL + '/storage/photos/'
 const productsList = ref({})
 const productsListAll = ref({})
 import Sidebar from '@/components/Sidebar.vue'
@@ -42,6 +44,12 @@ const changeCategories = (categories) => {
               :key="product"
               class="scrollbar-demo-item"
             >
+              <img
+                :src="photoUrl + product.photos[0].path"
+                alt="photo"
+                v-if="product.photos.length > 0"
+              />
+              <span v-else>No Photos</span>
               <template #header>
                 <div class="card-header">
                   <span>{{ product.name }}</span>

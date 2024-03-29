@@ -9,6 +9,7 @@ export type InputCreateProduct = {
   description: string
   subcategory_id: number
   id: number
+  photos: Array<any>
 }
 export type InputUpdateProduct = {
   name: string

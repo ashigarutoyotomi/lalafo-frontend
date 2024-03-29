@@ -14,8 +14,8 @@ async function deleteProduct(id: number) {
 async function getProduct(id: number) {
   return await http.get<APIResponse<boolean>>(`products/${id}`)
 }
-async function createProduct(input: InputCreateProduct) {
-  return await http.post<APIResponse<Product>>('products', input)
+async function createProduct(input: InputCreateProduct, config: object) {
+  return await http.post<APIResponse<Product>>('products', input, config)
 }
 
 async function updateProduct(input: InputUpdateProduct, id: number) {

@@ -12,8 +12,8 @@ async function deletePhoto(id: number) {
 async function getPhoto(id: number) {
   return await http.get<APIResponse<boolean>>(`product-photos/${id}`)
 }
-async function createPhoto(input: InputCreatePhoto) {
-  return await http.post<APIResponse<Photo>>('product-photos', input)
+async function createPhoto(input: any, config: object) {
+  return await http.post<APIResponse<Photo>>('product-photos', input, config)
 }
 
 async function myPhotos() {

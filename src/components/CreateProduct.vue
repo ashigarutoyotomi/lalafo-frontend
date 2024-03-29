@@ -5,7 +5,17 @@
       <el-container>
         <el-aside width="200px"></el-aside>
         <el-main>
-          <input type="file" ref="fileInput" multiple accept="images/png,images/jpg" />
+          <el-upload
+            action=""
+            :auto-load="false"
+            :limit="3"
+            :http-request="loadFile"
+            :before-upload="beforeUpload"
+            :before-remove="beforeRemove"
+            multiple
+          >
+            <el-button type="primary">Click to upload</el-button>
+          </el-upload>
           <el-form :model="form" label-width="auto" style="max-width: 600px">
             <el-form-item label="Name">
               <el-input v-model="form.name" />
@@ -69,7 +79,7 @@ import router from '@/router'
 import type { UploadRawFile } from 'element-plus'
 import type { UploadRequestOptions } from 'element-plus'
 
-const fileInput = ref(null)
+const formData = reactive(new FormData())
 const subcategories = ref({})
 const form = reactive({
   name: '',
@@ -81,15 +91,19 @@ const form = reactive({
 })
 const product: InputCreateProduct = form
 
-const onSubmit = () => {
-  const files = fileInput.value.files
-  for (let i = 0; i < files.length; i++) {
-    form.photos.push(new FormData(files[i]))
+const config = {
+  headers: {
+    'Content-Type': 'multipart/form-data'
   }
-  const response = API.products.createProduct(form)
+}
+const onSubmit = () => {
+  formData.append('name', form.name)
+  formData.append('description', form.description)
+  formData.append('subcategory_id', form.subcategory_id)
+  formData.append('price', form.price)
+  const response = API.products.createProduct(formData, config)
   response.then((res) => {
     ElMessage.success('Product created successfully!')
-    router.go(-1)
   })
   response.catch((err) => {
     if (err.response.status == 422) {
@@ -97,6 +111,7 @@ const onSubmit = () => {
     }
     ElMessage.error(err.response.data)
   })
+  // console.log(form)
 }
 
 onMounted(() => {
@@ -112,7 +127,15 @@ onMounted(() => {
 const goBack = () => {
   router.go(-1)
 }
-const handleFileChange = (event) => {
-  selectedFiles.value = Array.from(event.target.files)
+const loadFile = (uploadFile: UploadRawFile) => {
+  formData.append('photos[]', uploadFile.file)
+  // console.log(form.photos)
+}
+const beforeUpload = (uploadFile: UploadRawFile) => {
+  const types = ['image/png', 'image/jpg']
+  return types.includes(uploadFile.type)
+}
+const beforeRemove = (uploadFile: UploadRawFile) => {
+  // form.photos=form.photos.filter()
 }
 </script>
