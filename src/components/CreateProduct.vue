@@ -7,12 +7,13 @@
         <el-main>
           <el-upload
             action=""
+            accept=".jpg, .png"
             :auto-load="false"
             :limit="3"
             :http-request="loadFile"
             :before-upload="beforeUpload"
             :before-remove="beforeRemove"
-            multiple
+            multiple="true"
           >
             <el-button type="primary">Click to upload</el-button>
           </el-upload>
@@ -112,6 +113,7 @@ const onSubmit = () => {
     ElMessage.error(err.response.data)
   })
   // console.log(form)
+  router.go(-1)
 }
 
 onMounted(() => {
@@ -130,9 +132,10 @@ const goBack = () => {
 const loadFile = (uploadFile: UploadRawFile) => {
   formData.append('photos[]', uploadFile.file)
   // console.log(form.photos)
+  console.log('formData', formData.getAll('photos[]'))
 }
 const beforeUpload = (uploadFile: UploadRawFile) => {
-  const types = ['image/png', 'image/jpg']
+  const types = ['image/png', 'image/jpeg']
   return types.includes(uploadFile.type)
 }
 const beforeRemove = (uploadFile: UploadRawFile) => {
