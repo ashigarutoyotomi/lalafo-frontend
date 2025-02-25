@@ -1,4 +1,5 @@
 # lalafo-frontend
+my pet project i decided to develop to learn and practive fullstack in vue laravel. i wrote it by myself with help of mentor so dont care if u use it in prod
 
 This template should help get you started developing with Vue 3 in Vite.
 
